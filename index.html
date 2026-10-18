@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doraemon Quiz</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      padding: 25px 15px;
+    }
+    .card {
+      background: white;
+      color: #123;
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 400px;
+      margin: 30px auto;
+    }
+    h1 { color: #0072ff; }
+    button {
+      background: #0072ff;
+      color: white;
+      border: 0;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 17px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔵 Doraemon Quiz</h1>
+  <div class="card">
+    <h2>डोरेमोन की दुनिया में स्वागत है!</h2>
+    <p>क्या तुम डोरेमोन के सच्चे फैन हो?</p>
+    <button onclick="startQuiz()">Quiz शुरू करो 🚀</button>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    function startQuiz() {
+      document.getElementById("message").innerText =
+        "🎉 बहुत बढ़िया! तुम्हारा Quiz जल्द शुरू होगा!";
+    }
+  </script>
+</body>
+</html>
