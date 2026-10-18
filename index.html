@@ -1,182 +1,211 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>How Well Do You Know Ansh?</title>
+<title>Ansh Quiz 💙</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;padding:18px;min-height:100vh;text-align:center;
- font-family:Arial,sans-serif;color:white;
- background:radial-gradient(circle at top,#18265b,#050713 70%);
+ margin:0;min-height:100vh;padding:18px;
+ display:flex;align-items:center;justify-content:center;
+ font-family:Arial,sans-serif;color:white;text-align:center;
+ background:radial-gradient(circle at top,#183c83,#080b20 70%);
 }
-h1{color:#54efff;text-shadow:0 0 18px #00cfff}
-.card{
- max-width:500px;margin:18px auto;padding:20px;
- border:1px solid #42eaff;border-radius:24px;
- background:#111a32;box-shadow:0 0 25px #007dba66;
+.page{
+ width:100%;max-width:460px;padding:25px 20px;
+ border:1px solid #39eaff;border-radius:25px;
+ background:#10172deF;box-shadow:0 0 28px #00d9ff55;
 }
-#hero{font-size:60px;filter:drop-shadow(0 0 12px #00dfff)}
-#questionPhoto{width:100%;height:190px;object-fit:cover;border-radius:16px}
-#options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-.option{
- padding:8px;border:1px solid #39dfff;border-radius:15px;
- background:#101e3d;color:white;cursor:pointer;min-width:0;
+.hidden{display:none}
+.sticker{font-size:100px;filter:drop-shadow(0 0 18px #24eaff)}
+h1{font-size:28px;color:#5cecff;text-shadow:0 0 15px #00d9ff}
+h2{font-size:22px}
+input{
+ width:100%;padding:15px;border-radius:12px;
+ border:1px solid #47eaff;background:#071128;color:white;
+ font-size:17px;margin:16px 0;
 }
-.option img{width:100%;height:100px;object-fit:cover;border-radius:10px}
-.option span{display:block;padding:8px 0;font-weight:bold}
-.option:disabled{opacity:.8;cursor:default}
-.correct{border:3px solid #38ff9c!important}
-.wrong{border:3px solid #ff567b!important}
-#next,#restart{
- width:100%;padding:14px;margin-top:16px;border:0;
- border-radius:12px;background:#36eaff;color:#06101c;
- font-size:17px;font-weight:bold;
+button{
+ border:0;border-radius:12px;padding:14px 18px;
+ background:linear-gradient(90deg,#00c8ff,#6b8cff);
+ color:#061026;font-size:17px;font-weight:bold;
+ cursor:pointer;
 }
-#feedback{min-height:26px;color:#6effbc;font-weight:bold}
-#smiles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
-.smile{position:absolute;bottom:-50px;font-size:35px;animation:rise 1.7s linear forwards}
+.mainbtn{width:100%;margin-top:12px}
+#questionPhoto{width:100%;height:150px;object-fit:cover;border-radius:15px}
+#options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.option{padding:8px;background:#121f40;color:white;border:1px solid #3eeaff}
+.option img{width:100%;height:80px;object-fit:cover;border-radius:8px}
+.option span{display:block;margin-top:7px}
+.option:disabled{opacity:.9}
+.correct{border:3px solid #47ffad!important}
+.wrong{border:3px solid #ff6286!important}
+#feedback{min-height:25px;color:#69ffb6}
+.small{color:#b6c6ed;font-size:13px}
+#smiles{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.smile{position:absolute;bottom:-40px;font-size:34px;animation:rise 1.7s linear forwards}
 @keyframes rise{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
-#end{display:none}
-.small{color:#a8b9e7;font-size:13px}
 </style>
 </head>
 <body>
-<h1>💙 How Well Do You Know Ansh? 💙</h1>
-<div id="hero">👑</div>
-<p>क्या तुम Ansh के सच्चे दोस्त हो?</p>
 
-<div class="card" id="quiz">
- <p id="progress"></p>
- <img id="questionPhoto" alt="सवाल की फोटो">
+<!-- PAGE 1: NAME -->
+<section class="page" id="page1">
+ <div class="sticker">🤖💙</div>
+ <h1>WELCOME FRIEND!</h1>
+ <h2>Your Name</h2>
+ <input id="nameInput" placeholder="Enter your name..." maxlength="30">
+ <button class="mainbtn" onclick="submitName()">SUBMIT ➜</button>
+ <p class="small">✨ Ansh Special Quiz ✨</p>
+</section>
+
+<!-- PAGE 2: INTRO -->
+<section class="page hidden" id="page2">
+ <div class="sticker">🤖✨</div>
+ <h1 id="welcomeTitle">Hello Friend!</h1>
+ <h2>How much do you know about Ansh?</h2>
+ <p>💙 Ready to prove your friendship?</p>
+ <p>10 Questions • Picture Options • Fun Quiz</p>
+ <button class="mainbtn" onclick="startQuiz()">NEXT ➜</button>
+</section>
+
+<!-- PAGE 3: QUIZ -->
+<section class="page hidden" id="page3">
+ <div style="font-size:38px">🤖💙</div>
+ <p id="progress">Question 1 / 10</p>
+ <img id="questionPhoto" alt="Quiz picture">
  <h2 id="question"></h2>
  <div id="options"></div>
  <p id="feedback"></p>
- <button id="next" hidden onclick="nextQuestion()">अगला सवाल ➜</button>
- <p class="small">Ansh Special Quiz ✨</p>
-</div>
+ <button id="nextBtn" class="mainbtn" hidden onclick="nextQuestion()">NEXT ➜</button>
+</section>
 
-<div class="card" id="end">
- <div style="font-size:65px">🏆</div>
- <h2>Quiz पूरा हुआ!</h2>
- <p id="result"></p>
- <p id="message"></p>
- <button id="restart" onclick="restart()">फिर से खेलें 🔄</button>
-</div>
+<!-- PAGE 4: RESULT -->
+<section class="page hidden" id="page4">
+ <div class="sticker">🏆🎉</div>
+ <h1>QUIZ COMPLETED!</h1>
+ <h2 id="finalScore"></h2>
+ <p id="finalMessage"></p>
+ <button class="mainbtn" onclick="restart()">PLAY AGAIN 🔄</button>
+</section>
+
 <div id="smiles"></div>
 
 <script>
 const questions=[
- {q:"Ansh की पसंदीदा च्यूइंग गम कौन-सी है?",a:0,o:["Boomer","Center Fresh","Orbit","Happydent"],p:["🍬","🫧","🍃","😁"],hero:"🍬"},
- {q:"Ansh का पसंदीदा गेम कौन-सा है?",a:1,o:["Football","Chess","Cricket","Ludo"],p:["⚽","♟️","🏏","🎲"],hero:"♟️"},
- {q:"Ansh का पसंदीदा रंग कौन-सा है?",a:2,o:["लाल और पीला","हरा और नीला","Black and White","गुलाबी और बैंगनी"],p:["❤️","💚","🖤","💗"],hero:"🖤"},
- {q:"Ansh का पसंदीदा फास्ट फूड क्या है?",a:0,o:["Manchurian","Pizza","Burger","Sandwich"],p:["🥘","🍕","🍔","🥪"],hero:"🥘"},
- {q:"Ansh के पसंदीदा टीचर कौन हैं?",a:1,o:["Amit Sir","Shiv Rao","Rahul Sir","Vijay Sir"],p:["👨‍🏫","🎓","📚","✏️"],hero:"🎓"},
- {q:"Ansh का पसंदीदा सब्जेक्ट कौन-सा है?",a:3,o:["English","History","Science","Maths"],p:["🔤","🏛️","🔬","➗"],hero:"➗"},
- {q:"Ansh के दोस्त का नाम क्या है?",a:0,o:["Bhaskar Yadav","Rohan Sharma","Aman Patil","Rahul Verma"],p:["🤝","😎","🧑‍🤝‍🧑","🌟"],hero:"🤝"},
- {q:"Ansh का पसंदीदा खेल कौन-सा है?",a:2,o:["Cricket","Football","Volleyball","Badminton"],p:["🏏","⚽","🏐","🏸"],hero:"🏐"},
- {q:"Ansh की पसंदीदा मिठाई कौन-सी है?",a:1,o:["Gulab Jamun","Jalebi","Rasgulla","Ladoo"],p:["🍮","🥨","🍡","🍬"],hero:"🍯"},
- {q:"Ansh का पसंदीदा कार्टून कौन-सा है?",a:3,o:["Shinchan","Pokemon","Tom and Jerry","Doraemon"],p:["😜","⚡","🐱","🤖"],hero:"🤖"}
+ {q:"What is Ansh's favourite chewing gum?",a:0,o:["Boomer","Center Fresh","Orbit","Happydent"],p:["🍬","🫧","🍃","😁"]},
+ {q:"What is Ansh's favourite game?",a:1,o:["Football","Chess","Cricket","Ludo"],p:["⚽","♟️","🏏","🎲"]},
+ {q:"What are Ansh's favourite colours?",a:2,o:["Red & Yellow","Green & Blue","Black & White","Pink & Purple"],p:["❤️","💚","🖤","💗"]},
+ {q:"What is Ansh's favourite fast food?",a:0,o:["Manchurian","Pizza","Burger","Sandwich"],p:["🥘","🍕","🍔","🥪"]},
+ {q:"Who is Ansh's favourite teacher?",a:1,o:["Amit Sir","Shiv Rao","Rahul Sir","Vijay Sir"],p:["👨‍🏫","🎓","📚","✏️"]},
+ {q:"What is Ansh's favourite subject?",a:3,o:["English","History","Science","Maths"],p:["🔤","🏛️","🔬","➗"]},
+ {q:"What is the name of Ansh's friend?",a:0,o:["Bhaskar Yadav","Rohan Sharma","Aman Patil","Rahul Verma"],p:["🤝","😎","🧑‍🤝‍🧑","🌟"]},
+ {q:"What is Ansh's favourite sport?",a:2,o:["Cricket","Football","Volleyball","Badminton"],p:["🏏","⚽","🏐","🏸"]},
+ {q:"What is Ansh's favourite sweet?",a:1,o:["Gulab Jamun","Jalebi","Rasgulla","Ladoo"],p:["🍮","🥨","🍡","🍬"]},
+ {q:"What is Ansh's favourite cartoon?",a:3,o:["Shinchan","Pokemon","Tom and Jerry","Doraemon"],p:["😜","⚡","🐱","🤖"]}
 ];
 
-let index=0,score=0,answered=false;
-const $=id=>document.getElementById(id);
+let playerName="",idx=0,score=0,answered=false;
 
-// Emoji illustrations are built into the code, so no photo upload is needed.
-function picture(emoji,bg){
+function showPage(n){
+ for(let i=1;i<=4;i++)
+  document.getElementById("page"+i).classList.toggle("hidden",i!==n);
+}
+function submitName(){
+ const name=document.getElementById("nameInput").value.trim();
+ if(!name){alert("Please enter your name!");return}
+ playerName=name;
+ document.getElementById("welcomeTitle").textContent="Hello, "+playerName+"! 💙";
+ showPage(2);
+}
+function picture(emoji,i){
+ const colors=[
+  ["#18265d","#007f9d"],["#183b68","#5e3290"],
+  ["#050505","#646b80"],["#572052","#d87d37"]
+ ];
+ const c=colors[i%4];
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180">
- <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
- <stop stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/>
- </linearGradient></defs>
- <rect width="300" height="180" rx="18" fill="url(#g)"/>
- <circle cx="150" cy="90" r="55" fill="#ffffff" fill-opacity=".09" stroke="#9df8ff" stroke-opacity=".65"/>
- <text x="150" y="112" font-size="66" text-anchor="middle">${emoji}</text>
+ <defs><linearGradient id="g"><stop stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs>
+ <rect width="300" height="180" rx="16" fill="url(#g)"/>
+ <circle cx="150" cy="90" r="55" fill="#fff" fill-opacity=".08" stroke="#70efff" stroke-opacity=".8"/>
+ <text x="150" y="114" text-anchor="middle" font-size="68">${emoji}</text>
  </svg>`;
  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
 }
-const palettes=[
- ["#20205d","#007e9e"],["#152e58","#6a328d"],
- ["#050505","#6a7183"],["#632044","#e07831"]
-];
-
-function render(){
- answered=false;
- const item=questions[index];
- $("progress").textContent=`सवाल ${index+1} / ${questions.length}`;
- $("question").textContent=item.q;
- $("questionPhoto").src=picture(item.hero,["#092c52","#126a91"]);
- $("feedback").textContent="";
- $("next").hidden=true;
- $("options").innerHTML="";
- item.o.forEach((option,i)=>{
-  const btn=document.createElement("button");
-  btn.className="option";
-  const img=document.createElement("img");
-  img.src=picture(item.p[i],palettes[i]);
-  img.alt=option;
-  const label=document.createElement("span");
-  label.textContent=option;
-  btn.append(img,label);
-  btn.onclick=()=>choose(i,btn);
-  $("options").appendChild(btn);
- });
- $("hero").textContent="👑";
+function startQuiz(){
+ idx=0;score=0;showPage(3);renderQuestion();
 }
-function choose(choice,btn){
+function renderQuestion(){
+ answered=false;
+ const item=questions[idx];
+ document.getElementById("progress").textContent=`Question ${idx+1} / ${questions.length}`;
+ document.getElementById("question").textContent=item.q;
+ document.getElementById("questionPhoto").src=picture(item.p[item.a],0);
+ document.getElementById("feedback").textContent="";
+ const next=document.getElementById("nextBtn");
+ next.hidden=true;
+ next.textContent=idx===9?"SEE RESULT 🏆":"NEXT ➜";
+ const options=document.getElementById("options");
+ options.innerHTML="";
+ item.o.forEach((label,i)=>{
+  const b=document.createElement("button");
+  b.className="option";
+  const img=document.createElement("img");
+  img.src=picture(item.p[i],i);
+  img.alt=label;
+  const span=document.createElement("span");
+  span.textContent=label;
+  b.append(img,span);
+  b.onclick=()=>chooseAnswer(i,b);
+  options.appendChild(b);
+ });
+}
+function chooseAnswer(i,btn){
  if(answered)return;
  answered=true;
- const item=questions[index];
+ const item=questions[idx];
  document.querySelectorAll(".option").forEach(b=>b.disabled=true);
- if(choice===item.a){
+ if(i===item.a){
   score++;
   btn.classList.add("correct");
-  $("feedback").textContent="🎉 सही जवाब! तुम Ansh को जानते हो!";
+  document.getElementById("feedback").textContent="🎉 Correct! Great job!";
   celebrate();
  }else{
   btn.classList.add("wrong");
   document.querySelectorAll(".option")[item.a].classList.add("correct");
-  $("feedback").textContent="😊 सही जवाब: "+item.o[item.a];
+  document.getElementById("feedback").textContent="Correct answer: "+item.o[item.a];
  }
- $("next").hidden=false;
- $("next").textContent=index===questions.length-1?"रिजल्ट देखें 🏆":"अगला सवाल ➜";
+ document.getElementById("nextBtn").hidden=false;
 }
 function celebrate(){
- const area=$("smiles");
- for(let i=0;i<28;i++){
-  const el=document.createElement("span");
-  el.className="smile";
-  el.textContent=["😊","😁","😄","✨","💙"][i%5];
-  el.style.left=Math.random()*100+"%";
-  el.style.animationDelay=Math.random()*.5+"s";
-  area.appendChild(el);
-  setTimeout(()=>el.remove(),2300);
+ const box=document.getElementById("smiles");
+ for(let i=0;i<25;i++){
+  const s=document.createElement("span");
+  s.className="smile";s.textContent=["😊","😁","😄","✨","💙"][i%5];
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*.4+"s";
+  box.appendChild(s);
+  setTimeout(()=>s.remove(),2200);
  }
 }
 function nextQuestion(){
  if(!answered)return;
- index++;
- if(index<questions.length){render();return;}
- $("quiz").style.display="none";
- $("end").style.display="block";
- $("result").textContent=`तुम्हारा स्कोर: ${score}/10`;
- if(score===10){
-  $("message").textContent="🏆 कमाल! तुम Ansh को बहुत अच्छी तरह जानते हो!";
- }else if(score>=7){
-  $("message").textContent="💙 शानदार! तुम Ansh के अच्छे दोस्त हो!";
- }else if(score>=4){
-  $("message").textContent="🙂 अच्छा प्रयास! Ansh के बारे में और जानो!";
- }else{
-  $("message").textContent="तुम्हें Ansh की पसंद और शौक अभी और जानने हैं!";
- }
+ idx++;
+ if(idx<questions.length){renderQuestion();return}
+ showPage(4);
+ document.getElementById("finalScore").textContent=`${playerName}, your score is ${score}/10`;
+ let message="";
+ if(score===10)message="🏆 Amazing! You know Ansh perfectly!";
+ else if(score>=7)message="💙 Fantastic! You know Ansh very well!";
+ else if(score>=4)message="😊 Good try! Learn more about Ansh!";
+ else message="Keep trying! You still have more to learn about Ansh.";
+ document.getElementById("finalMessage").textContent=message;
 }
 function restart(){
- index=0;score=0;
- $("end").style.display="none";
- $("quiz").style.display="block";
- render();
+ document.getElementById("nameInput").value="";
+ playerName="";idx=0;score=0;showPage(1);
 }
-render();
 </script>
 </body>
 </html>
