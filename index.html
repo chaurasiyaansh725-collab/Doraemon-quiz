@@ -2,85 +2,181 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doraemon Quiz</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How Well Do You Know Ansh?</title>
 <style>
-body{margin:0;background:#e8f7ff;font-family:Arial,sans-serif;text-align:center;color:#123}
-header{background:#078be0;color:white;padding:18px}
-.card{background:white;margin:20px auto;padding:22px;border-radius:20px;max-width:440px;box-shadow:0 4px 15px #aac}
-button{border:0;border-radius:12px;padding:13px;margin:7px;background:#078be0;color:white;font-size:17px;cursor:pointer}
-.option{display:block;width:100%;box-sizing:border-box;background:#e8f5ff;color:#123;border:2px solid #078be0}
-#feedback{font-weight:bold;font-size:20px}
-#smiles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-.smile{position:absolute;bottom:-60px;font-size:35px;animation:up 1.8s linear forwards}
-@keyframes up{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+*{box-sizing:border-box}
+body{
+ margin:0;padding:18px;min-height:100vh;text-align:center;
+ font-family:Arial,sans-serif;color:white;
+ background:radial-gradient(circle at top,#18265b,#050713 70%);
+}
+h1{color:#54efff;text-shadow:0 0 18px #00cfff}
+.card{
+ max-width:500px;margin:18px auto;padding:20px;
+ border:1px solid #42eaff;border-radius:24px;
+ background:#111a32;box-shadow:0 0 25px #007dba66;
+}
+#hero{font-size:60px;filter:drop-shadow(0 0 12px #00dfff)}
+#questionPhoto{width:100%;height:190px;object-fit:cover;border-radius:16px}
+#options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.option{
+ padding:8px;border:1px solid #39dfff;border-radius:15px;
+ background:#101e3d;color:white;cursor:pointer;min-width:0;
+}
+.option img{width:100%;height:100px;object-fit:cover;border-radius:10px}
+.option span{display:block;padding:8px 0;font-weight:bold}
+.option:disabled{opacity:.8;cursor:default}
+.correct{border:3px solid #38ff9c!important}
+.wrong{border:3px solid #ff567b!important}
+#next,#restart{
+ width:100%;padding:14px;margin-top:16px;border:0;
+ border-radius:12px;background:#36eaff;color:#06101c;
+ font-size:17px;font-weight:bold;
+}
+#feedback{min-height:26px;color:#6effbc;font-weight:bold}
+#smiles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.smile{position:absolute;bottom:-50px;font-size:35px;animation:rise 1.7s linear forwards}
+@keyframes rise{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+#end{display:none}
+.small{color:#a8b9e7;font-size:13px}
 </style>
 </head>
 <body>
-<header><h1>🔵 Doraemon Quiz</h1><p>क्या तुम सच्चे फैन हो?</p></header>
-<div class="card" id="game">
-<h2>डोरेमोन क्विज़ में स्वागत है!</h2>
-<p>10 सवालों के जवाब दो और अपना स्कोर देखो।</p>
-<button onclick="startQuiz()">🚀 Quiz शुरू करो</button>
+<h1>💙 How Well Do You Know Ansh? 💙</h1>
+<div id="hero">👑</div>
+<p>क्या तुम Ansh के सच्चे दोस्त हो?</p>
+
+<div class="card" id="quiz">
+ <p id="progress"></p>
+ <img id="questionPhoto" alt="सवाल की फोटो">
+ <h2 id="question"></h2>
+ <div id="options"></div>
+ <p id="feedback"></p>
+ <button id="next" hidden onclick="nextQuestion()">अगला सवाल ➜</button>
+ <p class="small">Ansh Special Quiz ✨</p>
+</div>
+
+<div class="card" id="end">
+ <div style="font-size:65px">🏆</div>
+ <h2>Quiz पूरा हुआ!</h2>
+ <p id="result"></p>
+ <p id="message"></p>
+ <button id="restart" onclick="restart()">फिर से खेलें 🔄</button>
 </div>
 <div id="smiles"></div>
+
 <script>
 const questions=[
-{q:"डोरेमोन किस रंग का है?",a:["नीला","लाल","हरा","पीला"],c:0},
-{q:"डोरेमोन कहाँ से आया है?",a:["भविष्य से","समुद्र से","जंगल से","चाँद से"],c:0},
-{q:"डोरेमोन की जेब कैसी है?",a:["चार-आयामी जेब","स्कूल बैग","खिलौने का डिब्बा","किताब"],c:0},
-{q:"नोबिता का पूरा नाम क्या है?",a:["नोबिता नोबी","सिजुका नोबी","जियान गोदा","सुनेओ हो네카वा"],c:0},
-{q:"डोरेमोन को क्या खाना बहुत पसंद है?",a:["डोरायाकी","पिज़्ज़ा","समोसा","आइसक्रीम"],c:0},
-{q:"नोबिता की दोस्त कौन है?",a:["शिजुका","डोरेमी","डोरायेमन","तमाको"],c:0},
-{q:"जियान का असली नाम क्या है?",a:["ताकेशी गोदा","सुनेओ होनेकाوا","नोबिता नोबी","हिदेतोशी"],c:0},
-{q:"डोरेमोन की बहन का नाम क्या है?",a:["डोरेमी","शिजुका","तमाको","मिचिको"],c:0},
-{q:"डोरेमोन के कान क्यों नहीं हैं?",a:["चूहों ने कुतर दिए थे","वह बिना कान पैदा हुआ","उसने छिपा दिए","वह रोबोट नहीं है"],c:0},
-{q:"नोबिता को अक्सर किसमें परेशानी होती है?",a:["पढ़ाई में","खाना खाने में","चलने में","गाने सुनने में"],c:0}
+ {q:"Ansh की पसंदीदा च्यूइंग गम कौन-सी है?",a:0,o:["Boomer","Center Fresh","Orbit","Happydent"],p:["🍬","🫧","🍃","😁"],hero:"🍬"},
+ {q:"Ansh का पसंदीदा गेम कौन-सा है?",a:1,o:["Football","Chess","Cricket","Ludo"],p:["⚽","♟️","🏏","🎲"],hero:"♟️"},
+ {q:"Ansh का पसंदीदा रंग कौन-सा है?",a:2,o:["लाल और पीला","हरा और नीला","Black and White","गुलाबी और बैंगनी"],p:["❤️","💚","🖤","💗"],hero:"🖤"},
+ {q:"Ansh का पसंदीदा फास्ट फूड क्या है?",a:0,o:["Manchurian","Pizza","Burger","Sandwich"],p:["🥘","🍕","🍔","🥪"],hero:"🥘"},
+ {q:"Ansh के पसंदीदा टीचर कौन हैं?",a:1,o:["Amit Sir","Shiv Rao","Rahul Sir","Vijay Sir"],p:["👨‍🏫","🎓","📚","✏️"],hero:"🎓"},
+ {q:"Ansh का पसंदीदा सब्जेक्ट कौन-सा है?",a:3,o:["English","History","Science","Maths"],p:["🔤","🏛️","🔬","➗"],hero:"➗"},
+ {q:"Ansh के दोस्त का नाम क्या है?",a:0,o:["Bhaskar Yadav","Rohan Sharma","Aman Patil","Rahul Verma"],p:["🤝","😎","🧑‍🤝‍🧑","🌟"],hero:"🤝"},
+ {q:"Ansh का पसंदीदा खेल कौन-सा है?",a:2,o:["Cricket","Football","Volleyball","Badminton"],p:["🏏","⚽","🏐","🏸"],hero:"🏐"},
+ {q:"Ansh की पसंदीदा मिठाई कौन-सी है?",a:1,o:["Gulab Jamun","Jalebi","Rasgulla","Ladoo"],p:["🍮","🥨","🍡","🍬"],hero:"🍯"},
+ {q:"Ansh का पसंदीदा कार्टून कौन-सा है?",a:3,o:["Shinchan","Pokemon","Tom and Jerry","Doraemon"],p:["😜","⚡","🐱","🤖"],hero:"🤖"}
 ];
-let index=0,score=0,locked=false;
-function startQuiz(){index=0;score=0;showQuestion();}
-function showQuestion(){
-locked=false;
-const q=questions[index];
-document.getElementById("game").innerHTML=
-"<h2>सवाल "+(index+1)+" / "+questions.length+"</h2>"+
-"<h3>"+q.q+"</h3>"+
-q.a.map((v,i)=>'<button class="option" onclick="answer('+i+')">'+v+'</button>').join("")+
-'<p id="feedback"></p>';
+
+let index=0,score=0,answered=false;
+const $=id=>document.getElementById(id);
+
+// Emoji illustrations are built into the code, so no photo upload is needed.
+function picture(emoji,bg){
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+ <stop stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/>
+ </linearGradient></defs>
+ <rect width="300" height="180" rx="18" fill="url(#g)"/>
+ <circle cx="150" cy="90" r="55" fill="#ffffff" fill-opacity=".09" stroke="#9df8ff" stroke-opacity=".65"/>
+ <text x="150" y="112" font-size="66" text-anchor="middle">${emoji}</text>
+ </svg>`;
+ return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
 }
-function answer(n){
-if(locked)return;
-locked=true;
-const q=questions[index];
-const f=document.getElementById("feedback");
-if(n===q.c){score++;f.textContent="🎉 सही जवाब! बहुत बढ़िया!";smileParty();}
-else{f.textContent="🙂 गलत जवाब! सही जवाब: "+q.a[q.c];}
-const buttons=document.querySelectorAll(".option");
-buttons.forEach(b=>b.disabled=true);
-const next=document.createElement("button");
-next.textContent=index===questions.length-1?"रिज़ल्ट देखें 🏆":"अगला सवाल ➜";
-next.onclick=()=>{index++;if(index<questions.length)showQuestion();else showResult();};
-document.getElementById("game").appendChild(next);
+const palettes=[
+ ["#20205d","#007e9e"],["#152e58","#6a328d"],
+ ["#050505","#6a7183"],["#632044","#e07831"]
+];
+
+function render(){
+ answered=false;
+ const item=questions[index];
+ $("progress").textContent=`सवाल ${index+1} / ${questions.length}`;
+ $("question").textContent=item.q;
+ $("questionPhoto").src=picture(item.hero,["#092c52","#126a91"]);
+ $("feedback").textContent="";
+ $("next").hidden=true;
+ $("options").innerHTML="";
+ item.o.forEach((option,i)=>{
+  const btn=document.createElement("button");
+  btn.className="option";
+  const img=document.createElement("img");
+  img.src=picture(item.p[i],palettes[i]);
+  img.alt=option;
+  const label=document.createElement("span");
+  label.textContent=option;
+  btn.append(img,label);
+  btn.onclick=()=>choose(i,btn);
+  $("options").appendChild(btn);
+ });
+ $("hero").textContent="👑";
 }
-function smileParty(){
-const box=document.getElementById("smiles");
-for(let i=0;i<24;i++){
-const s=document.createElement("span");
-s.className="smile";s.textContent=["😊","😄","😁","😆","🙂"][i%5];
-s.style.left=(Math.random()*95)+"%";
-s.style.animationDelay=(Math.random()*0.5)+"s";
-box.appendChild(s);
-setTimeout(()=>s.remove(),2400);
+function choose(choice,btn){
+ if(answered)return;
+ answered=true;
+ const item=questions[index];
+ document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+ if(choice===item.a){
+  score++;
+  btn.classList.add("correct");
+  $("feedback").textContent="🎉 सही जवाब! तुम Ansh को जानते हो!";
+  celebrate();
+ }else{
+  btn.classList.add("wrong");
+  document.querySelectorAll(".option")[item.a].classList.add("correct");
+  $("feedback").textContent="😊 सही जवाब: "+item.o[item.a];
+ }
+ $("next").hidden=false;
+ $("next").textContent=index===questions.length-1?"रिजल्ट देखें 🏆":"अगला सवाल ➜";
 }
+function celebrate(){
+ const area=$("smiles");
+ for(let i=0;i<28;i++){
+  const el=document.createElement("span");
+  el.className="smile";
+  el.textContent=["😊","😁","😄","✨","💙"][i%5];
+  el.style.left=Math.random()*100+"%";
+  el.style.animationDelay=Math.random()*.5+"s";
+  area.appendChild(el);
+  setTimeout(()=>el.remove(),2300);
+ }
 }
-function showResult(){
-let msg=score>=8?"वाह! तुम डोरेमोन के सुपर फैन हो! 🥳":
-score>=5?"अच्छी कोशिश! और खेलो, और सीखो! 😊":
-"अरे! तुम डोरेमोन को अभी कम जानते हो। फिर से खेलकर देखो! 😄";
-document.getElementById("game").innerHTML=
-"<h2>🏆 Quiz पूरा हुआ!</h2><h1>"+score+" / 10</h1><h3>"+msg+"</h3>"+
-'<button onclick="startQuiz()">फिर से खेलो 🔄</button>';
+function nextQuestion(){
+ if(!answered)return;
+ index++;
+ if(index<questions.length){render();return;}
+ $("quiz").style.display="none";
+ $("end").style.display="block";
+ $("result").textContent=`तुम्हारा स्कोर: ${score}/10`;
+ if(score===10){
+  $("message").textContent="🏆 कमाल! तुम Ansh को बहुत अच्छी तरह जानते हो!";
+ }else if(score>=7){
+  $("message").textContent="💙 शानदार! तुम Ansh के अच्छे दोस्त हो!";
+ }else if(score>=4){
+  $("message").textContent="🙂 अच्छा प्रयास! Ansh के बारे में और जानो!";
+ }else{
+  $("message").textContent="तुम्हें Ansh की पसंद और शौक अभी और जानने हैं!";
+ }
 }
+function restart(){
+ index=0;score=0;
+ $("end").style.display="none";
+ $("quiz").style.display="block";
+ render();
+}
+render();
 </script>
 </body>
 </html>
