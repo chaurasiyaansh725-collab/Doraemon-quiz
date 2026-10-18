@@ -1,51 +1,86 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doraemon Quiz</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: white;
-      padding: 25px 15px;
-    }
-    .card {
-      background: white;
-      color: #123;
-      padding: 25px;
-      border-radius: 20px;
-      max-width: 400px;
-      margin: 30px auto;
-    }
-    h1 { color: #0072ff; }
-    button {
-      background: #0072ff;
-      color: white;
-      border: 0;
-      padding: 12px 22px;
-      border-radius: 12px;
-      font-size: 17px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doraemon Quiz</title>
+<style>
+body{margin:0;background:#e8f7ff;font-family:Arial,sans-serif;text-align:center;color:#123}
+header{background:#078be0;color:white;padding:18px}
+.card{background:white;margin:20px auto;padding:22px;border-radius:20px;max-width:440px;box-shadow:0 4px 15px #aac}
+button{border:0;border-radius:12px;padding:13px;margin:7px;background:#078be0;color:white;font-size:17px;cursor:pointer}
+.option{display:block;width:100%;box-sizing:border-box;background:#e8f5ff;color:#123;border:2px solid #078be0}
+#feedback{font-weight:bold;font-size:20px}
+#smiles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.smile{position:absolute;bottom:-60px;font-size:35px;animation:up 1.8s linear forwards}
+@keyframes up{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+</style>
 </head>
 <body>
-  <h1>🔵 Doraemon Quiz</h1>
-  <div class="card">
-    <h2>डोरेमोन की दुनिया में स्वागत है!</h2>
-    <p>क्या तुम डोरेमोन के सच्चे फैन हो?</p>
-    <button onclick="startQuiz()">Quiz शुरू करो 🚀</button>
-    <p id="message"></p>
-  </div>
-
-  <script>
-    function startQuiz() {
-      document.getElementById("message").innerText =
-        "🎉 बहुत बढ़िया! तुम्हारा Quiz जल्द शुरू होगा!";
-    }
-  </script>
+<header><h1>🔵 Doraemon Quiz</h1><p>क्या तुम सच्चे फैन हो?</p></header>
+<div class="card" id="game">
+<h2>डोरेमोन क्विज़ में स्वागत है!</h2>
+<p>10 सवालों के जवाब दो और अपना स्कोर देखो।</p>
+<button onclick="startQuiz()">🚀 Quiz शुरू करो</button>
+</div>
+<div id="smiles"></div>
+<script>
+const questions=[
+{q:"डोरेमोन किस रंग का है?",a:["नीला","लाल","हरा","पीला"],c:0},
+{q:"डोरेमोन कहाँ से आया है?",a:["भविष्य से","समुद्र से","जंगल से","चाँद से"],c:0},
+{q:"डोरेमोन की जेब कैसी है?",a:["चार-आयामी जेब","स्कूल बैग","खिलौने का डिब्बा","किताब"],c:0},
+{q:"नोबिता का पूरा नाम क्या है?",a:["नोबिता नोबी","सिजुका नोबी","जियान गोदा","सुनेओ हो네카वा"],c:0},
+{q:"डोरेमोन को क्या खाना बहुत पसंद है?",a:["डोरायाकी","पिज़्ज़ा","समोसा","आइसक्रीम"],c:0},
+{q:"नोबिता की दोस्त कौन है?",a:["शिजुका","डोरेमी","डोरायेमन","तमाको"],c:0},
+{q:"जियान का असली नाम क्या है?",a:["ताकेशी गोदा","सुनेओ होनेकाوا","नोबिता नोबी","हिदेतोशी"],c:0},
+{q:"डोरेमोन की बहन का नाम क्या है?",a:["डोरेमी","शिजुका","तमाको","मिचिको"],c:0},
+{q:"डोरेमोन के कान क्यों नहीं हैं?",a:["चूहों ने कुतर दिए थे","वह बिना कान पैदा हुआ","उसने छिपा दिए","वह रोबोट नहीं है"],c:0},
+{q:"नोबिता को अक्सर किसमें परेशानी होती है?",a:["पढ़ाई में","खाना खाने में","चलने में","गाने सुनने में"],c:0}
+];
+let index=0,score=0,locked=false;
+function startQuiz(){index=0;score=0;showQuestion();}
+function showQuestion(){
+locked=false;
+const q=questions[index];
+document.getElementById("game").innerHTML=
+"<h2>सवाल "+(index+1)+" / "+questions.length+"</h2>"+
+"<h3>"+q.q+"</h3>"+
+q.a.map((v,i)=>'<button class="option" onclick="answer('+i+')">'+v+'</button>').join("")+
+'<p id="feedback"></p>';
+}
+function answer(n){
+if(locked)return;
+locked=true;
+const q=questions[index];
+const f=document.getElementById("feedback");
+if(n===q.c){score++;f.textContent="🎉 सही जवाब! बहुत बढ़िया!";smileParty();}
+else{f.textContent="🙂 गलत जवाब! सही जवाब: "+q.a[q.c];}
+const buttons=document.querySelectorAll(".option");
+buttons.forEach(b=>b.disabled=true);
+const next=document.createElement("button");
+next.textContent=index===questions.length-1?"रिज़ल्ट देखें 🏆":"अगला सवाल ➜";
+next.onclick=()=>{index++;if(index<questions.length)showQuestion();else showResult();};
+document.getElementById("game").appendChild(next);
+}
+function smileParty(){
+const box=document.getElementById("smiles");
+for(let i=0;i<24;i++){
+const s=document.createElement("span");
+s.className="smile";s.textContent=["😊","😄","😁","😆","🙂"][i%5];
+s.style.left=(Math.random()*95)+"%";
+s.style.animationDelay=(Math.random()*0.5)+"s";
+box.appendChild(s);
+setTimeout(()=>s.remove(),2400);
+}
+}
+function showResult(){
+let msg=score>=8?"वाह! तुम डोरेमोन के सुपर फैन हो! 🥳":
+score>=5?"अच्छी कोशिश! और खेलो, और सीखो! 😊":
+"अरे! तुम डोरेमोन को अभी कम जानते हो। फिर से खेलकर देखो! 😄";
+document.getElementById("game").innerHTML=
+"<h2>🏆 Quiz पूरा हुआ!</h2><h1>"+score+" / 10</h1><h3>"+msg+"</h3>"+
+'<button onclick="startQuiz()">फिर से खेलो 🔄</button>';
+}
+</script>
 </body>
 </html>
